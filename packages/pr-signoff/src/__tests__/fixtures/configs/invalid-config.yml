@@ -1,0 +1,7 @@
+azureDevOps:
+  organization: test-org
+  # Missing required project field
+
+signoff:
+  commands:
+    - npm test

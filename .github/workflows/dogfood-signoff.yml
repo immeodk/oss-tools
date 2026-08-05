@@ -1,0 +1,36 @@
+name: Dogfood pr-signoff
+
+# Runs pr-signoff against this repo's own pull requests, using pr-signoff
+# itself to validate its own PRs (dogfooding).
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  statuses: write
+
+jobs:
+  signoff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build
+
+      # Runs the CLI straight from the workspace build rather than installing
+      # the published package, so this workflow exercises the current PR's
+      # code, not the last release.
+      - name: Run pr-signoff on itself
+        run: node packages/pr-signoff/pr-signoff.js signoff --stream-output
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

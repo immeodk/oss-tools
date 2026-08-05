@@ -1,0 +1,7 @@
+azureDevOps:
+  organization: test-org
+  project: test-project
+signoff:
+commands:
+  - invalid yaml syntax here [
+    - this should break parsing
