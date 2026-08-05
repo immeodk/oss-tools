@@ -18,7 +18,7 @@
     "node": ">=22.13.0"
   },
   "scripts": {
-    "build": "npm run build --workspaces --if-present",
+    "build": "npm run build -w @immeodk/git-utils -w @immeodk/schema-tools && npm run build -w @immeodk/pr-signoff",
     "type-check": "npm run type-check --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
     "test:coverage": "npm run test:coverage --workspaces --if-present",
