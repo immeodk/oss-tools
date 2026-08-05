@@ -12,3 +12,6 @@ First public release. This package was previously versioned internally
 public 1.x line as a clean break, so a `^1.x` range from that internal feed
 can never resolve to this public package. Changes prior to this changelog are
 not tracked here.
+
+- **`engines.node` raised to `>=22`** — `chalk` was bumped to v6, which
+  requires Node.js 22. Node 18/20 are no longer supported.

@@ -11,7 +11,8 @@ linking the CLI globally for manual testing).
 
 ## Prerequisites
 
-- **Node.js >= 18**.
+- **Node.js >= 22.13.0** (pr-signoff's dependencies — commander, inquirer —
+  require it; git-utils/schema-tools alone only need >= 22).
 - **npm** (this repo uses npm workspaces — not pnpm, yarn, lerna, or
   Turborepo).
 - A working **`git`** binary on `PATH` — `git-utils` shells out to it.

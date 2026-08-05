@@ -7,7 +7,7 @@ only covers what's specific to the `pr-signoff` package.
 
 ## Prerequisites
 
-- **Node.js >= 18** (the CLI relies on the global `fetch` and ES2022 features).
+- **Node.js >= 22.13.0** (commander 15 and inquirer 14 both require it).
 - For end-to-end testing against a real provider: the **GitHub CLI** (`gh`) and/or
   the **Azure CLI** (`az`), authenticated to a repository you control.
 

@@ -13,3 +13,8 @@ public 1.x line as a clean break, so a `^1.x` range from that internal feed
 can never resolve to this public package. Its dependencies on
 `@immeodk/git-utils` and `@immeodk/schema-tools` move to `^2.0.0` in lockstep.
 Changes prior to this changelog are not tracked here.
+
+- **`engines.node` raised to `>=22.13.0`** — `execa` v10, `chalk` v6, and
+  `commander` v15 all require Node.js 22, and `inquirer` v14 specifically
+  requires `>=23.5.0 || ^22.13.0 || ^20.17.0`. Node 18/20 are no longer
+  supported.
