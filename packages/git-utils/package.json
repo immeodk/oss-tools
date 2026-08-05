@@ -33,7 +33,7 @@
     "format:check": "prettier --check ."
   },
   "dependencies": {
-    "execa": "^9.6.0"
+    "execa": "^10.0.1"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
