@@ -30,6 +30,14 @@ packages and symlinks the internal dependency (`pr-signoff` → `git-utils` /
 npm install
 ```
 
+> The root `package.json` pins `"overrides": { "@types/node": "^26.1.2" }`.
+> Without it, `@changesets/cli` pulls in an ancient `@types/node@^12.7.1`
+> (via `@manypkg/get-packages` → `@manypkg/find-root@1.1.0`) that `npm
+install` tolerates but `npm ci` rejects as out of sync. `@types/node` is
+> compile-time-only, so forcing one version everywhere is safe — don't
+> remove this without verifying `npm ci` (not just `npm install`) still
+> passes from a clean `node_modules`.
+
 ## Everyday checks
 
 Run from the repository root — these fan out across all three packages:
