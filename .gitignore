@@ -57,9 +57,11 @@ Thumbs.db
 .env.local
 .env.*.local
 
-# Local configuration that shouldn't be committed
-pr-signoff.json
-config.json
+# Local configuration that shouldn't be committed — anchored to the repo
+# root so this doesn't also swallow nested, legitimate config files like
+# .changeset/config.json
+/pr-signoff.json
+/config.json
 
 # Test artifacts
 test-results/

@@ -18,3 +18,8 @@ Changes prior to this changelog are not tracked here.
   `commander` v15 all require Node.js 22, and `inquirer` v14 specifically
   requires `>=23.5.0 || ^22.13.0 || ^20.17.0`. Node 18/20 are no longer
   supported.
+- **`getRepositoryName()` failed against an `actions/checkout` remote** —
+  it sets `origin` without a `.git` suffix (e.g.
+  `https://github.com/owner/repo`), which the fallback regex required. Made
+  the suffix optional, matching the more lenient parsing already used in
+  `origin-url.ts`.

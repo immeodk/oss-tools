@@ -184,8 +184,11 @@ export function createGitOperations(options: GitOperationsOptions = {}): GitOper
         if (azureMatch?.[1]) {
           return azureMatch[1];
         }
-        // Fallback to standard git URL format
-        const standardMatch = remoteUrl.match(/\/([^/]+)\.git$/);
+        // Fallback to standard git URL format. The `.git` suffix is
+        // optional — GitHub Actions' checkout action sets `origin` without
+        // it (e.g. `https://github.com/owner/repo`), while a local clone or
+        // SSH remote typically includes it (`git@github.com:owner/repo.git`).
+        const standardMatch = remoteUrl.match(/\/([^/]+?)(?:\.git)?$/);
         if (standardMatch?.[1]) {
           return standardMatch[1];
         }
