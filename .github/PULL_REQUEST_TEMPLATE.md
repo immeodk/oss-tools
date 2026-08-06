@@ -23,6 +23,8 @@
 - [ ] `npm run build` passes
 - [ ] Tests added or updated for the change
 - [ ] Docs updated if behaviour changed
+- [ ] `npm run changeset` run if this changes a published package's behavior
+      or docs (see [CONTRIBUTING.md](../CONTRIBUTING.md#versioning-and-releases))
 
 ## Notes for reviewers
 

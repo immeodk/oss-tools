@@ -9,11 +9,16 @@ concurrency: ${{ github.workflow }}-${{ github.ref }}
 permissions:
   contents: write
   pull-requests: write
-  id-token: write # for npm provenance
+  id-token: write # for npm provenance + Trusted Publishing OIDC
 
 jobs:
   release:
     runs-on: ubuntu-latest
+    # Must match the environment name configured on each package's npm
+    # Trusted Publisher settings — npm validates the OIDC token's environment
+    # claim against it, so a mismatch (or missing this line) makes OIDC
+    # publishing fail even with id-token: write set above.
+    environment: NPM
     steps:
       - uses: actions/checkout@v7
         with:
@@ -24,6 +29,10 @@ jobs:
           node-version: 22
           registry-url: https://registry.npmjs.org
 
+      # Trusted Publishing (OIDC) needs npm CLI >= 11.5.1; Node 22's bundled
+      # npm may be older than that.
+      - run: npm install -g npm@latest
+
       - run: npm ci
 
       - run: npm run build
@@ -33,6 +42,9 @@ jobs:
       # Opens/updates a "Version Packages" PR when there are unreleased
       # changesets; once that PR is merged, this step publishes every package
       # whose version changed. See .changeset/config.json for versioning rules.
+      # No NPM_TOKEN — publishing authenticates via Trusted Publishing (OIDC),
+      # using the id-token permission and environment above instead of a
+      # long-lived secret.
       - name: Create Release PR or Publish
         uses: changesets/action@v1
         with:
@@ -40,5 +52,3 @@ jobs:
           version: npm run version-packages
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

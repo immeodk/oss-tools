@@ -82,15 +82,17 @@ longer satisfies the consumer's declared range.
 
 This repo uses [Changesets](https://github.com/changesets/changesets), not
 hand-edited `package.json` versions or `CHANGELOG.md` entries. If your change
-affects a published package's behavior, add a changeset before opening the
-PR:
+affects a published package's behavior — including a docs-only change like a
+README edit, since that's what shows on the npm package page — add a
+changeset before opening the PR:
 
 ```bash
 npm run changeset
 ```
 
 Follow the prompts to pick which package(s) changed and the semver bump
-(patch/minor/major). `git-utils`, `schema-tools`, and `pr-signoff` version
+(patch/minor/major — a README-only change with no behavior change is a
+`patch`). `git-utils`, `schema-tools`, and `pr-signoff` version
 independently — they are **not** locked together. If a changeset bumps
 `git-utils` or `schema-tools`, Changesets automatically adds a matching bump
 to `pr-signoff`'s dependency range on merge (see `.changeset/config.json`'s
@@ -98,6 +100,28 @@ to `pr-signoff`'s dependency range on merge (see `.changeset/config.json`'s
 
 Do not hand-edit `CHANGELOG.md` or `version` fields — the release workflow
 (`.github/workflows/release.yml`) does this from your changesets.
+
+### What happens after your PR merges
+
+Releasing is two merges to `main`, not one, and after the first one you (as a
+maintainer) never run `npm publish` by hand:
+
+1. **Your PR merges** (with its `.changeset/*.md` file included). `release.yml`
+   runs and, since an unreleased changeset exists, opens or updates an
+   automated **"Version Packages" PR** — it bumps the affected package(s)'
+   `version` in `package.json` and writes the `CHANGELOG.md` entry from your
+   changeset's summary. Nothing publishes yet.
+2. **Merge the "Version Packages" PR** (whenever you're ready to actually
+   release — it can sit open collecting multiple changesets first). That
+   merge re-triggers `release.yml`; this time there's no unreleased
+   changeset left, so it runs the publish step instead and pushes the new
+   version(s) to npm.
+
+Publishing authenticates via npm's **Trusted Publishing (OIDC)** — the
+`release` job declares `environment: NPM` (must match the environment
+configured on each package's Trusted Publisher settings on npmjs.com) and
+`permissions: id-token: write`, and gets a short-lived token per run. There is
+no `NPM_TOKEN` secret involved and no `npm login` step for anyone to run.
 
 ## Coding style
 
