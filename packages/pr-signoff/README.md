@@ -23,15 +23,13 @@ pr-signoff validate  # Run locally first
 pr-signoff           # Create the status check (defaults to signoff)
 ```
 
-This follows the same philosophy as [gh-signoff](https://github.com/basecamp/gh-signoff) for GitHub, but tailored for Azure DevOps workflows with some key differences:
+This follows the same philosophy as [gh-signoff](https://github.com/basecamp/gh-signoff) for GitHub, but tailored for both Azure DevOps and Github workflows with some key differences:
 
 - **Azure DevOps integration** - Creates status checks via Azure DevOps API
 - **Built-in validation** - Unlike gh-signoff, you can't sign off unless your tests actually pass. We validate git state, run your tests, and only then create the status check
 - **Folder scoping** - In monorepos, only run checks for changed areas
 - **Multiple policies** - Different teams can have different validation requirements in the same repo
 - **Branch policies** - Set up required status checks directly from the CLI
-
-For future releases of `pr-signoff` we plan to integrate [gh-signoff](https://github.com/basecamp/gh-signoff) to add support of running GibHub as DevOps platform.
 
 ## How to Use It
 
