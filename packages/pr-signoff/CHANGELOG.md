@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.0.2
+
+### Patch Changes
+
+- 5a0a9f7: Documentation update
+- Updated dependencies [5a0a9f7]
+  - @immeodk/schema-tools@2.0.2
+  - @immeodk/git-utils@2.0.2
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
