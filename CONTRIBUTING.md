@@ -101,27 +101,52 @@ to `pr-signoff`'s dependency range on merge (see `.changeset/config.json`'s
 Do not hand-edit `CHANGELOG.md` or `version` fields — the release workflow
 (`.github/workflows/release.yml`) does this from your changesets.
 
-### What happens after your PR merges
+### Cutting a release (maintainers)
 
-Releasing is two merges to `main`, not one, and after the first one you (as a
-maintainer) never run `npm publish` by hand:
+Releasing is two merges to `main`, not one — and unlike the standard
+Changesets setup, the **second one currently needs a maintainer to run one
+command and open one PR by hand.** That's not a missing feature; the
+`immeodk` org disables "Actions can create or approve pull requests"
+org-wide, so `release.yml` cannot open the version-bump PR itself the way
+`changesets/action` normally would. See `SECURITY.md`/commit history for why
+that org policy exists and why we didn't route around it with a stored PAT.
 
-1. **Your PR merges** (with its `.changeset/*.md` file included). `release.yml`
-   runs and, since an unreleased changeset exists, opens or updates an
-   automated **"Version Packages" PR** — it bumps the affected package(s)'
-   `version` in `package.json` and writes the `CHANGELOG.md` entry from your
-   changeset's summary. Nothing publishes yet.
-2. **Merge the "Version Packages" PR** (whenever you're ready to actually
-   release — it can sit open collecting multiple changesets first). That
-   merge re-triggers `release.yml`; this time there's no unreleased
-   changeset left, so it runs the publish step instead and pushes the new
-   version(s) to npm.
+1. **A PR with a changeset merges** (any contributor can trigger this — see
+   "Versioning and releases" above). `release.yml` runs, sees an unreleased
+   changeset, logs that a maintainer needs to run the version step, and
+   exits cleanly. **Nothing publishes yet, and no PR gets opened
+   automatically.**
+2. **When ready to release** (this can batch up several merged changesets —
+   no need to do this after every single PR), a maintainer runs, from an
+   up-to-date `main`:
 
-Publishing authenticates via npm's **Trusted Publishing (OIDC)** — the
+   ```bash
+   git checkout main && git pull
+   git checkout -b changeset-release/main
+   npm run version-packages   # bumps package.json versions, writes CHANGELOG.md entries, updates the lockfile
+   git add -A
+   git commit -m "Version Packages"
+   git push -u origin changeset-release/main
+   gh pr create --title "Version Packages" --base main \
+     --body "Release PR — see the CHANGELOG.md diffs for what's included."
+   ```
+
+3. **Review and merge that PR** like any other — it's subject to the same
+   branch ruleset as everything else (1 approval + code-owner review from
+   `oss-maintainers`). Get the other maintainer to approve, or use your
+   bypass if you're confident in the diff and reviewing your own release PR
+   isn't practical.
+4. **That merge re-triggers `release.yml`.** No unreleased changesets remain
+   this time, so it runs the publish step: builds, tests, and publishes
+   every package whose version changed, and creates a GitHub Release with
+   the changelog notes.
+
+Publishing itself authenticates via npm's **Trusted Publishing (OIDC)** — the
 `release` job declares `environment: NPM` (must match the environment
 configured on each package's Trusted Publisher settings on npmjs.com) and
 `permissions: id-token: write`, and gets a short-lived token per run. There is
-no `NPM_TOKEN` secret involved and no `npm login` step for anyone to run.
+no `NPM_TOKEN` secret involved and no `npm login` step for anyone to run —
+only step 2 above is manual, nothing else.
 
 ## Coding style
 
