@@ -1,0 +1,7 @@
+azureDevOps:
+  organization: test-org
+  project: test-project
+
+signoff:
+  commands:
+    - echo "test"

@@ -1,0 +1,66 @@
+{
+  "name": "@immeodk/git-utils",
+  "version": "2.0.0",
+  "description": "Common git validation utilities for platform engineering tools",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/immeodk/oss-tools.git",
+    "directory": "packages/git-utils"
+  },
+  "homepage": "https://github.com/immeodk/oss-tools/tree/main/packages/git-utils#readme",
+  "bugs": {
+    "url": "https://github.com/immeodk/oss-tools/issues"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc",
+    "type-check": "tsc --noEmit",
+    "dev": "tsc --watch",
+    "prebuild": "npm run type-check",
+    "prepublishOnly": "npm run build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:ui": "vitest --ui",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "dependencies": {
+    "execa": "^10.0.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^26.1.2",
+    "@vitest/coverage-v8": "^4.1.10",
+    "@vitest/ui": "^4.1.10",
+    "eslint": "^10.4.0",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.8.3",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.60.0",
+    "vitest": "^4.1.10"
+  },
+  "keywords": [
+    "git",
+    "utilities",
+    "validation",
+    "platform-engineering"
+  ],
+  "author": "Immeo P/S",
+  "license": "MIT",
+  "files": [
+    "dist/",
+    "README.md",
+    "package.json"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -1,0 +1,12 @@
+azureDevOps:
+  organization: test-org
+  project: test-project
+  tenantId: 12345678-1234-1234-1234-123456789abc
+
+signoff:
+  policyName: Test Policy
+  scopeToFolder: true
+  defaultValidationMode: local
+  commands:
+    - npm test
+    - npm run build

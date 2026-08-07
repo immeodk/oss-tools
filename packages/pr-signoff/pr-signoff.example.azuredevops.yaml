@@ -1,0 +1,31 @@
+# Example pr-signoff configuration — Azure DevOps
+#
+# Copy this file to `pr-signoff.yaml` (or `pr-signoff.yml`) in the folder you
+# want scoped, and replace the placeholder values below with your own.
+
+# Minimum tool version required
+minToolVersion: '2.0.0'
+
+# Azure DevOps connection details.
+# Exactly one of `azureDevOps` or `github` must be present in a config file —
+# see pr-signoff.example.github.yaml for the GitHub variant.
+azureDevOps:
+  organization: your-org
+  project: YourProject
+  tenantId: your-tenant-id # optional, only needed for certain auth flows
+
+signoff:
+  # Name shown as the status check / policy name
+  policyName: PR Signoff
+
+  # Scope signoff to the folder containing changes (useful for monorepos)
+  scopeToFolder: true
+
+  # Default validation method for new PRs: 'local' or 'pipeline'
+  defaultSignoffMethod: local
+
+  # Commands to run for validation
+  commands:
+    - npm install
+    - npm test
+    - npm run lint

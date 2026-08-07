@@ -1,0 +1,82 @@
+{
+  "name": "@immeodk/schema-tools",
+  "version": "2.0.0",
+  "description": "Generic JSON Schema generation and VS Code integration tools for YAML configuration files",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/immeodk/oss-tools.git",
+    "directory": "packages/schema-tools"
+  },
+  "homepage": "https://github.com/immeodk/oss-tools/tree/main/packages/schema-tools#readme",
+  "bugs": {
+    "url": "https://github.com/immeodk/oss-tools/issues"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc",
+    "type-check": "tsc --noEmit",
+    "prebuild": "npm run type-check",
+    "prepublishOnly": "npm run build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:ui": "vitest --ui",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./generator": {
+      "import": "./dist/generator/index.js",
+      "types": "./dist/generator/index.d.ts"
+    },
+    "./installer": {
+      "import": "./dist/installer/index.js",
+      "types": "./dist/installer/index.d.ts"
+    }
+  },
+  "dependencies": {
+    "chalk": "^6.0.0",
+    "ts-json-schema-generator": "^2.4.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^26.1.2",
+    "@vitest/coverage-v8": "^4.1.10",
+    "@vitest/ui": "^4.1.10",
+    "eslint": "^10.4.0",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.8.3",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.60.0",
+    "vitest": "^4.1.10"
+  },
+  "keywords": [
+    "json-schema",
+    "yaml",
+    "vscode",
+    "intellisense",
+    "schema-generator",
+    "configuration"
+  ],
+  "author": "Immeo P/S",
+  "license": "MIT",
+  "files": [
+    "dist/",
+    "README.md",
+    "package.json"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}
