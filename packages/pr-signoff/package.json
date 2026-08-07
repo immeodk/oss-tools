@@ -1,6 +1,6 @@
 {
   "name": "@immeodk/pr-signoff",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Pull Request Signoff Tool - Run CI checks and create status checks for pull requests",
   "main": "dist/index.js",
   "type": "module",
@@ -46,8 +46,8 @@
     "vitest": "^4.1.10"
   },
   "dependencies": {
-    "@immeodk/git-utils": "^2.0.0",
-    "@immeodk/schema-tools": "^2.0.0",
+    "@immeodk/git-utils": "^2.0.1",
+    "@immeodk/schema-tools": "^2.0.1",
     "boxen": "^8.0.1",
     "chalk": "^6.0.0",
     "commander": "^15.0.0",
