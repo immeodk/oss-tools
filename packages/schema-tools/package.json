@@ -1,6 +1,6 @@
 {
   "name": "@immeodk/schema-tools",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Generic JSON Schema generation and VS Code integration tools for YAML configuration files",
   "type": "module",
   "main": "dist/index.js",
