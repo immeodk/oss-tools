@@ -91,5 +91,35 @@ DevOps and GitHub REST APIs.
   organization/project values are validated to reject path-traversal and
   shell metacharacters. Reports of validation bypasses are in scope.
 - **External commands use argument arrays**, never interpolated shell
-  strings. Report any place where user- or config-controlled input reaches a
-  shell.
+  strings — **except `signoff.commands`, which is the one deliberate
+  exception, and needs care from you when you deploy it:**
+
+  `signoff.commands` entries run via `sh -c`/`cmd /c` — real shell
+  interpretation, not an argv array — because the feature's entire purpose is
+  letting you write ordinary shell syntax (`npm ci && npm test`). Restricting
+  its content would break that; this is not a bug to fix.
+
+  The property to be aware of instead: `pr-signoff` loads `pr-signoff.yaml`
+  from the checked-out working tree (`process.cwd()`). For a CI job triggered
+  by `pull_request`, that working tree reflects **the PR's own branch** —
+  including any change the PR itself makes to `pr-signoff.yaml`. A PR that
+  rewrites `signoff.commands` gets that content executed with whatever
+  permissions/secrets the invoking CI job holds. This is the well-known
+  ["Pwn Request"](https://securitylab.github.com/resources/github-actions-preventing-pwn-requests/)
+  pattern, applied to this tool specifically.
+
+  **If you run `pr-signoff` against pull requests from forks:**
+  - Don't grant that CI job more than a read-only token. GitHub already
+    forces `GITHUB_TOKEN` to read-only on a `pull_request` trigger when the
+    head repo is a fork, regardless of your workflow's `permissions:` block —
+    don't override that guarantee with `pull_request_target` (which checks
+    out the base ref by default, but can be configured to check out the
+    fork's head) or a broader static token unless you've deliberately decided
+    the checked-out code is trusted for that run.
+  - This repo's own `.github/workflows/dogfood-signoff.yml` follows this:
+    it triggers on plain `pull_request`, so the automatic read-only-for-forks
+    protection applies, and the job exposes no secret beyond that token.
+  - Prefer running `pr-signoff` with a config pinned to the base branch
+    (e.g., check it out from `main` explicitly) rather than whatever the PR
+    branch itself provides, if your CI job needs write-scoped credentials to
+    do its job (e.g., to actually post the status check).

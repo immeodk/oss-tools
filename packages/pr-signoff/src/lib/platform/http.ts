@@ -1,4 +1,5 @@
 import { HttpError, SchemaValidationError } from '../errors.js';
+import { scrubSecrets } from '../core/secret-scrubbing.js';
 
 /**
  * Thin typed `fetch` wrapper used by every platform adapter.
@@ -20,7 +21,10 @@ export async function httpJson<T>(
   const response = await fetch(url, init);
 
   if (!response.ok) {
-    const body = await response.text().catch(() => '');
+    const rawBody = await response.text().catch(() => '');
+    // Scrub before it ever becomes part of an error message or gets printed
+    // — see SECURITY.md and the `secret-scrubbing` module.
+    const body = scrubSecrets(rawBody);
     const suffix = body ? `: ${body}` : '';
     throw new HttpError(
       `${method} ${url} → ${response.status} ${response.statusText}${suffix}`,

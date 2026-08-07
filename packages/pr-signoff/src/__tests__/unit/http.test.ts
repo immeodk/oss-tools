@@ -72,6 +72,23 @@ describe('httpJson', () => {
     }
   });
 
+  test('scrubs a token from the response body before it reaches the error message', async () => {
+    mockFetch.mockResolvedValueOnce(
+      jsonResponse(
+        {},
+        {
+          status: 401,
+          text: 'Bad credentials: Authorization: Bearer ghp_abcdefghijklmnopqrstuvwxyz0123456789',
+        },
+      ),
+    );
+    const error = await httpJson('https://api/thing', parseThing).catch((e: unknown) => e);
+    expect(error).toBeInstanceOf(Error);
+    const message = (error as Error).message;
+    expect(message).not.toContain('ghp_abcdefghijklmnopqrstuvwxyz0123456789');
+    expect(message).toContain('[REDACTED]');
+  });
+
   test('throws when the body is not valid JSON', async () => {
     mockFetch.mockResolvedValueOnce({
       ok: true,
