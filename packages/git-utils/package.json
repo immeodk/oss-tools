@@ -1,6 +1,6 @@
 {
   "name": "@immeodk/git-utils",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Common git validation utilities for platform engineering tools",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

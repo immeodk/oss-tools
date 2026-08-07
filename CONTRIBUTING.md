@@ -98,8 +98,9 @@ independently — they are **not** locked together. If a changeset bumps
 to `pr-signoff`'s dependency range on merge (see `.changeset/config.json`'s
 `updateInternalDependencies`).
 
-Do not hand-edit `CHANGELOG.md` or `version` fields — the release workflow
-(`.github/workflows/release.yml`) does this from your changesets.
+Do not hand-edit `CHANGELOG.md` or `version` fields — running
+`npm run version-packages` does this from accumulated changesets (see
+"Cutting a release" below for when and how that actually runs).
 
 ### Cutting a release (maintainers)
 
@@ -107,9 +108,15 @@ Releasing is two merges to `main`, not one — and unlike the standard
 Changesets setup, the **second one currently needs a maintainer to run one
 command and open one PR by hand.** That's not a missing feature; the
 `immeodk` org disables "Actions can create or approve pull requests"
-org-wide, so `release.yml` cannot open the version-bump PR itself the way
-`changesets/action` normally would. See `SECURITY.md`/commit history for why
-that org policy exists and why we didn't route around it with a stored PAT.
+org-wide — a deliberate security control, not an oversight — so
+`release.yml` cannot open the version-bump PR itself the way
+`changesets/action` normally would. The alternative would be routing around
+it with a stored Personal Access Token or GitHub App credential just for
+this step; we chose the manual step instead, to avoid reintroducing a
+standing credential after already moving publishing itself off one (see
+"Publishing itself..." below). Revisit if the manual step becomes a genuine
+bottleneck — don't "fix" it by quietly adding a token back without deciding
+that trade-off is worth it again.
 
 1. **A PR with a changeset merges** (any contributor can trigger this — see
    "Versioning and releases" above). `release.yml` runs, sees an unreleased
