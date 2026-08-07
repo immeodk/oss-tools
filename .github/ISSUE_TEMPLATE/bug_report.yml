@@ -1,0 +1,70 @@
+name: Bug report
+description: Report a problem with pr-signoff
+title: '[Bug]: '
+labels: ['bug']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug report. Please **redact any real
+        tokens, tenant IDs, or private repository names** from logs and config
+        snippets before posting.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear description of the bug and its impact.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: The exact commands you ran and what you did.
+      placeholder: |
+        1. Run `pr-signoff ...`
+        2. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - Azure DevOps
+        - GitHub
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: pr-signoff version
+      description: Output of `pr-signoff --version`.
+    validations:
+      required: true
+  - type: input
+    id: node-version
+    attributes:
+      label: Node.js version
+      description: Output of `node --version`.
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+      placeholder: e.g. Windows 11, macOS 14, Ubuntu 22.04
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / output
+      description: Relevant output (run with `--verbose` if possible). Redact secrets.
+      render: shell
