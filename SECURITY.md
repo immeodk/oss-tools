@@ -17,8 +17,8 @@ Please upgrade before reporting an issue.
 | `@immeodk/pr-signoff`   | 2.0.x     | < 2.0       |
 
 These are the first public releases — each package was previously versioned
-internally on a private registry, and the major version bump to 2.0.0 marks
-a clean break so a stale internal reference can never resolve to the public
+internally on a private registry, and the major version bump to 2.x marks a
+clean break so a stale internal reference can never resolve to the public
 package.
 
 ## Reporting a vulnerability

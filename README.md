@@ -5,9 +5,9 @@ packages:
 
 | Package                                          | Purpose                                                                                                                | Version |
 | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- | ------- |
-| [`@immeodk/git-utils`](packages/git-utils)       | Git validation utilities (state checks, branch/commit helpers) used by other tools.                                    | 2.0.0   |
-| [`@immeodk/schema-tools`](packages/schema-tools) | JSON Schema generation from TypeScript + editor (VS Code/Cursor/Rider) YAML intellisense install.                      | 2.0.0   |
-| [`@immeodk/pr-signoff`](packages/pr-signoff)     | CLI that runs your CI checks locally and creates Azure DevOps/GitHub status checks. Depends on the two packages above. | 2.0.0   |
+| [`@immeodk/git-utils`](packages/git-utils)       | Git validation utilities (state checks, branch/commit helpers) used by other tools.                                    | 2.0.2   |
+| [`@immeodk/schema-tools`](packages/schema-tools) | JSON Schema generation from TypeScript + editor (VS Code/Cursor/Rider) YAML intellisense install.                      | 2.0.2   |
+| [`@immeodk/pr-signoff`](packages/pr-signoff)     | CLI that runs your CI checks locally and creates Azure DevOps/GitHub status checks. Depends on the two packages above. | 2.0.2   |
 
 If you only need one of these, you can install just that package — they're
 published independently. `pr-signoff` pulls in the other two as regular npm
