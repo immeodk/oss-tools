@@ -341,8 +341,13 @@ export function createPrCommand(): Command {
               console.log(chalk.dim('   Vim: "i" to insert, "Esc" then ":wq" to save and quit'));
             }
 
-            // Create temporary file with suggested content
-            const tempFile = path.join(os.tmpdir(), `pr-description-${Date.now()}.md`);
+            // Create temporary file with suggested content. mkdtempSync gives
+            // an unpredictable, exclusively-created directory — a plain
+            // Date.now()-based filename in the shared tmpdir would be
+            // guessable, letting another local process race to plant a
+            // symlink at that path before we write to it.
+            const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pr-signoff-'));
+            const tempFile = path.join(tempDir, 'pr-description.md');
             fs.writeFileSync(tempFile, descriptionSuggestion || '');
 
             // Launch editor directly without inquirer prompt
@@ -368,7 +373,7 @@ export function createPrCommand(): Command {
 
             // Read the edited content
             description = fs.readFileSync(tempFile, 'utf8').trim();
-            fs.unlinkSync(tempFile); // Clean up temp file
+            fs.rmSync(tempDir, { recursive: true, force: true }); // Clean up temp dir
           } else {
             // User chose not to edit - use suggestion as-is or leave empty
             description = descriptionSuggestion || '';
