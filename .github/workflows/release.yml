@@ -8,7 +8,6 @@ concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 permissions:
   contents: write
-  pull-requests: write
   id-token: write # for npm provenance + Trusted Publishing OIDC
 
 jobs:
@@ -39,16 +38,34 @@ jobs:
 
       - run: npm test
 
-      # Opens/updates a "Version Packages" PR when there are unreleased
-      # changesets; once that PR is merged, this step publishes every package
-      # whose version changed. See .changeset/config.json for versioning rules.
+      # The "Actions can create/approve pull requests" is disabled
+      # org-wide, so changesets/action can't open the "Version Packages" PR
+      # itself (its default `version` behavior — even passing no `version`
+      # input at all still falls back to running `changeset version` and
+      # attempting to open that PR, which fails the same way). So a
+      # maintainer runs `npm run version-packages` and opens that one PR by
+      # hand (see CONTRIBUTING.md) — a *human* creating a PR isn't subject to
+      # the org restriction. This step only ever handles the publish half:
+      # once that PR is merged, no changesets remain, and this runs.
+      - name: Check for unreleased changesets
+        id: changesets
+        run: |
+          if find .changeset -maxdepth 1 -name '*.md' ! -iname 'README.md' | grep -q .; then
+            echo "Unreleased changesets found — skipping publish. A maintainer needs to run 'npm run version-packages' and open a PR (see CONTRIBUTING.md)."
+            echo "pending=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "pending=false" >> "$GITHUB_OUTPUT"
+          fi
+
       # No NPM_TOKEN — publishing authenticates via Trusted Publishing (OIDC),
       # using the id-token permission and environment above instead of a
       # long-lived secret.
-      - name: Create Release PR or Publish
+      - name: Publish
+        if: steps.changesets.outputs.pending == 'false'
         uses: changesets/action@v1
         with:
           publish: npm run release
-          version: npm run version-packages
+          setupGitUser: true
+          createGithubReleases: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
