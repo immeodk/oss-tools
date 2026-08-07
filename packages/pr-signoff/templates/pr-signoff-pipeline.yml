@@ -1,0 +1,80 @@
+# ============================================================================
+# PR SIGNOFF PIPELINE - Simple pipeline validation using pr-signoff
+# ============================================================================
+
+trigger: none
+
+pr:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+# Pipeline permissions: The build service needs "Contribute to pull requests" permission
+# See: Project Settings > Repositories > [Repository] > Security > [Project] Build Service > Allow
+
+jobs:
+  - job: PRSignoff
+    displayName: 'Run PR Signoff'
+    condition: and(eq(variables['Build.Reason'], 'PullRequest'), not(contains(variables['System.PullRequest.PullRequestLabels'], 'signoff-method-local')))
+    steps:
+      - checkout: self
+        clean: true
+        fetchDepth: 0
+        persistCredentials: true
+
+      - task: NodeTool@0
+        displayName: 'Setup Node.js'
+        inputs:
+          versionSpec: '24.x'
+
+      - task: UseDotNet@2
+        displayName: 'Setup .NET'
+        inputs:
+          packageType: 'sdk'
+          version: '9.x'
+
+      - task: Cache@2
+        displayName: 'Cache npm packages'
+        inputs:
+          key: 'npm | "$(Agent.OS)" | **/package-lock.json, !**/node_modules/**'
+          restoreKeys: |
+            npm | "$(Agent.OS)"
+          path: $(Pipeline.Workspace)/.npm
+        continueOnError: true
+
+      - script: |
+          # Ensure cache directories exist
+          mkdir -p $(Pipeline.Workspace)/.npm
+
+          # Configure npm cache directory
+          npm config set cache $(Pipeline.Workspace)/.npm
+
+          echo "✅ Configured npm cache at $(Pipeline.Workspace)/.npm"
+        displayName: 'Setup npm configuration'
+
+      - script: |
+          # Install pr-signoff (published publicly on npm, no auth required)
+          npm install -g @immeodk/pr-signoff
+          pr-signoff --version
+        displayName: 'Install pr-signoff'
+
+      - script: |
+          # Find the pr-signoff configuration file and run from that directory
+          CONFIG_FILE=$(find . -name "pr-signoff.yaml" -o -name "pr-signoff.yml" | head -1)
+          if [ -z "$CONFIG_FILE" ]; then
+            echo "Error: pr-signoff.yaml or pr-signoff.yml not found in repository"
+            exit 1
+          fi
+
+          CONFIG_DIR=$(dirname "$CONFIG_FILE")
+          echo "Found pr-signoff config at: $CONFIG_FILE"
+          echo "Running pr-signoff from directory: $CONFIG_DIR"
+
+          cd "$CONFIG_DIR"
+          pr-signoff signoff --stream-output
+        displayName: 'Run pr-signoff'
+        env:
+          AZURE_DEVOPS_TOKEN: $(System.AccessToken)

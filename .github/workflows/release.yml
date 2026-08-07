@@ -1,0 +1,71 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+permissions:
+  contents: write
+  id-token: write # for npm provenance + Trusted Publishing OIDC
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    # Must match the environment name configured on each package's npm
+    # Trusted Publisher settings — npm validates the OIDC token's environment
+    # claim against it, so a mismatch (or missing this line) makes OIDC
+    # publishing fail even with id-token: write set above.
+    environment: NPM
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      # Trusted Publishing (OIDC) needs npm CLI >= 11.5.1; Node 22's bundled
+      # npm may be older than that.
+      - run: npm install -g npm@latest
+
+      - run: npm ci
+
+      - run: npm run build
+
+      - run: npm test
+
+      # The "Actions can create/approve pull requests" is disabled
+      # org-wide, so changesets/action can't open the "Version Packages" PR
+      # itself (its default `version` behavior — even passing no `version`
+      # input at all still falls back to running `changeset version` and
+      # attempting to open that PR, which fails the same way). So a
+      # maintainer runs `npm run version-packages` and opens that one PR by
+      # hand (see CONTRIBUTING.md) — a *human* creating a PR isn't subject to
+      # the org restriction. This step only ever handles the publish half:
+      # once that PR is merged, no changesets remain, and this runs.
+      - name: Check for unreleased changesets
+        id: changesets
+        run: |
+          if find .changeset -maxdepth 1 -name '*.md' ! -iname 'README.md' | grep -q .; then
+            echo "Unreleased changesets found — skipping publish. A maintainer needs to run 'npm run version-packages' and open a PR (see CONTRIBUTING.md)."
+            echo "pending=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "pending=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # No NPM_TOKEN — publishing authenticates via Trusted Publishing (OIDC),
+      # using the id-token permission and environment above instead of a
+      # long-lived secret.
+      - name: Publish
+        if: steps.changesets.outputs.pending == 'false'
+        uses: changesets/action@v1
+        with:
+          publish: npm run release
+          setupGitUser: true
+          createGithubReleases: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
