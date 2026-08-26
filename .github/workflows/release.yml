@@ -62,7 +62,7 @@ jobs:
       # long-lived secret.
       - name: Publish
         if: steps.changesets.outputs.pending == 'false'
-        uses: changesets/action@v1
+        uses: changesets/action@v2
         with:
           publish: npm run release
           setupGitUser: true
