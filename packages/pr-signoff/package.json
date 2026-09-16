@@ -52,10 +52,10 @@
     "chalk": "^6.0.0",
     "commander": "^15.0.0",
     "execa": "^10.0.1",
-    "inquirer": "^14.0.2",
+    "inquirer": "^14.2.2",
     "ora": "^9.4.1",
-    "yaml": "^2.8.1",
-    "zod": "^4.4.3"
+    "yaml": "^2.9.1",
+    "zod": "^4.6.4"
   },
   "keywords": [
     "azure-devops",
